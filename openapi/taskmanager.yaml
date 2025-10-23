@@ -36,6 +36,12 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Task'
+              examples:
+                ejemplo:
+                  value:
+                    - id: "1"
+                      title: "Mock desde OpenAPI"
+                      status: "todo"
         '400':
           description: Ha ocurrido algún error durante la ejecución
           content:
@@ -60,6 +66,15 @@ paths:
       responses:
         '201':
           description: Tarea creada correctamente. Devuelve el ID de la tarea que se acaba de crear
+          content:
+            application/json:              
+              examples:
+                ejemplo:
+                  value:
+                    id: "2"
+                    title: "Nueva tarea desde mock"
+                    status: "todo"
+                    createdAt: "2025-10-30T10:00:00Z" 
         '400':
           description: Ha ocurrido algún error durante la ejecución
           content:
@@ -92,6 +107,10 @@ components:
           enum: [low, medium, high]
           example: "medium"
         dueDate:
+          type: string
+          format: date-time
+          example: "2025-10-30T14:00:00Z"
+        createdAt:
           type: string
           format: date-time
           example: "2025-10-30T14:00:00Z"
