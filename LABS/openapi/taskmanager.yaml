@@ -32,6 +32,7 @@ paths:
               schema:
                 type: array
                 items:
+                  $ref: '#/components/schemas/Task'
                   type: object
                   properties:
                     id:
@@ -53,6 +54,7 @@ paths:
         content:
           application/json:
             schema:
+              $ref: '#/components/schemas/Task'
               type: object
               required:
                 - title
@@ -67,3 +69,48 @@ paths:
       responses:
         '201':
           description: Tarea creada correctamente. Devuelve el ID de la tarea que se acaba de crear
+components:
+  schemas: 
+    Task:
+      type: object
+      required:
+        - title
+        - status
+      properties:
+        id:
+          type: string
+          example: "64ab32cd9f0c1e12a45b78d9"
+        title:
+          type: string
+          example: "Preparar práctica de OpenAPI"
+        description:
+          type: string
+          example: "Definir modelos y esquemas en OpenAPI"
+        status:
+          type: string
+          enum: [todo, in_progress, done]
+          example: "todo"
+        priority:
+          type: string
+          enum: [low, medium, high]
+          example: "medium"
+        dueDate:
+          type: string
+          format: date-time
+          example: "2025-10-30T14:00:00Z"
+        tags:
+          type: array
+          items:
+            type: string
+            example: [home, work]
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Validation error"
+        details:
+          type: string
+          example: "The field 'title' is required"
