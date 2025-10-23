@@ -29,25 +29,64 @@ paths:
       operationId: getAllTasks
       responses:
         '200':
-          description: Lista de tareas obtenida correctamente
+          description: Lista paginada de tareas
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-              examples:
-                ejemplo:
-                  value:
-                    - id: "1"
-                      title: "Mock desde OpenAPI"
-                      status: "todo"
+                type: object
+                required: [items, page, limit, totalItems]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Task'
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 10
+                  totalItems:
+                    type: integer
+                    example: 42
+                  totalPages:
+                    type: integer
+                    example: 5
         '400':
-          description: Ha ocurrido algún error durante la ejecución
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/ErrorResponse'
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: Página de resultados
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 100
+          description: Número de resultados por página
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [todo, in_progress, done]
+          description: Filtrar por estado
+        - in: query
+          name: priority
+          schema:
+            type: string
+            enum: [low, medium, high]
+          description: Filtrar por prioridad
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Buscar texto en el título
     post:
       # This API has no security
       security: []
@@ -62,6 +101,9 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Task'
+            example:
+              title: "Revisar errores"
+              status: "todo"
               
       responses:
         '201':
@@ -76,11 +118,7 @@ paths:
                     status: "todo"
                     createdAt: "2025-10-30T10:00:00Z" 
         '400':
-          description: Ha ocurrido algún error durante la ejecución
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/ErrorResponse'
 components:
   schemas: 
     Task:
@@ -130,3 +168,29 @@ components:
         details:
           type: string
           example: "The field 'title' is required"
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          example: "https://api.ejemplo.com/errors/validation"
+        title:
+          type: string
+          example: "Validation error"
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: "Missing field 'title'"
+        instance:
+          type: string
+          example: "/tasks"
+  responses:
+    ErrorResponse:
+      description: Error genérico
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  
